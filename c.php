@@ -78,13 +78,12 @@
 		}
 		
 		function fieldList($table){
-			$query = "SELECT * FROM `$table` LIMIT 0,1";
-			$result_id = mysql_query($query);
+            $result_id = mysql_list_fields($this->database, $table);
 			
 			$numOfCols = mysql_num_fields($result_id); 
 			for($i=0;$i<$numOfCols;$i++)
 				$result[$i] = mysql_field_name($result_id, $i);
-			
+
 			return $result;
 		}
 	}
@@ -122,6 +121,11 @@
 			$con->connect();
 			echo json_encode($con->dbList());
 			break;
+		case "fieldlist":
+		    $con->connect();
+		    $con->selectDb($database);
+		    echo json_encode($con->fieldList($table));
+		    break;
 		case "query":
 			$con->connect();
 			$con->query($query);
