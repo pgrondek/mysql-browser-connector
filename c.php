@@ -20,7 +20,7 @@
 		}
 		
 		function connect(){
-			if(!$this->connected){
+			if(!$this->is_connected){
 				$this->link = @mysql_connect($this->server, $this->user, $this->password);
 				if(!$this->link){
 					return 'CANNOT connect: '.mysql_error();
@@ -67,8 +67,8 @@
 				mysql_close($this->link);
 		}
 		
-		function selectTable($table){
-			$query = "SELECT * FROM `$table`";
+		function selectTable($table, $start, $limit){
+			$query = "SELECT * FROM `$table` LIMIT $start, $limit";
 			$result_id = mysql_query($query);
 			
 			for($i=0;$row=mysql_fetch_row($result_id);$i++)
@@ -96,7 +96,8 @@
 	
 	$database	= $_GET['d'];
 	$table		= $_GET['t'];
-	
+	$start      = $_GET['s'];
+	$limit      = $_GET['l'];
 	$query 		= $_GET['q'];
 	
 	if(($user == null) || ($password == null) || ($action == null))
@@ -130,11 +131,10 @@
 			$con->connect();
 			$con->query($query);
 			break;
-		case "select":
+		case "getrows":
 			$con->connect();
 			$con->selectDb($database);
-			print_r($con->fieldList($table));
-			print_r($con->selectTable($table));
+			echo json_encode($con->selectTable($table, $start, $limit));
 			break;
 	}
 	
