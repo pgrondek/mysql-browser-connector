@@ -112,15 +112,15 @@
 		case "dblist":
 			$con->connect();
 			$list = $con->dbList();
-			print_r($list);
+			echo json_encode($list);
 			break;
 		case "tablelist":
 			$con->connect();
-			print_r($con->tableList($database));
+			echo json_encode($con->tableList($database));
 			break;
 		case "dblist":
 			$con->connect();
-			print_r($con->dbList());
+			echo json_encode($con->dbList());
 			break;
 		case "query":
 			$con->connect();
