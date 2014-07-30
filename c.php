@@ -86,6 +86,13 @@
 
 			return $result;
 		}
+			
+		function numRows($table){
+		    $result_id = mysql_query("SELECT COUNT(*) as total_count FROM `$table`");
+
+		    $ret = mysql_fetch_object($result_id);
+            return $ret->total_count;
+	    }
 	}
 
 	$action 	= $_GET['a'];
@@ -118,15 +125,16 @@
 			$con->connect();
 			echo json_encode($con->tableList($database));
 			break;
-		case "dblist":
-			$con->connect();
-			echo json_encode($con->dbList());
-			break;
 		case "fieldlist":
 		    $con->connect();
 		    $con->selectDb($database);
 		    echo json_encode($con->fieldList($table));
 		    break;
+	    case "numrows":
+	        $con->connect();
+	        $con->selectDb($database);
+	        echo $con->numRows($table);
+	        break;
 		case "query":
 			$con->connect();
 			$con->query($query);
