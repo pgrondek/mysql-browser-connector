@@ -93,6 +93,65 @@
 		    $ret = mysql_fetch_object($result_id);
             return $ret->total_count;
 	    }
+	    
+	    function updateElement($table, $headerJSON, $oldValuesJSON, $newValuesJSON){
+	        $header = json_decode($headerJSON);
+	        $oldValues = json_decode($oldValuesJSON);
+	        $newValues = json_decode($newValuesJSON);
+	        $query = "UPDATE `$table` SET ";
+	        
+	        for($i = 0;$i < sizeof($header); $i++){
+	            $query .= "`".$header[$i]."` = '".$newValues[$i]."' ";
+	            if($i+1 < sizeof($header))
+	                $query .= ", ";                
+	        }
+	        $query .= " WHERE ( ";
+	        for($i = 0;$i < sizeof($header); $i++){
+	            $query .= "`".$header[$i]."` = '".$oldValues[$i]."' ";
+	            if($i+1 < sizeof($header))
+	                $query .= " && ";
+	        }
+	        $query .= ");";
+	        
+	        $result_id = mysql_query($query);
+	        
+	        if( !$result_id ){
+	            echo mysql_error();
+	        }
+	        
+	        $info = mysql_info();
+	        echo  $info ;
+	    }
+	    
+	    function addElement($table, $headerJSON, $valuesJSON){
+	        $header = json_decode($headerJSON);
+	        $values = json_decode($valuesJSON);
+	        $query = "INSERT INTO `$table` (";
+	        
+	        for($i = 0;$i < sizeof($header); $i++){
+	            $query .= "`".$header[$i]."`";
+	            if($i+1 < sizeof($header))
+	                $query .= ", ";                
+	        }
+	        $query .= ") VALUES ( ";
+	        for($i = 0;$i < sizeof($header); $i++){
+	            $query .= "'".$values[$i]."' ";
+	            if($i+1 < sizeof($header))
+	                $query .= " , ";
+	        }
+	        $query .= ");";
+	        
+	        $result_id = mysql_query($query);
+	        
+	        if( !$result_id ){
+	            echo mysql_error();
+	        } else {
+	            echo OK;
+	        }
+	        
+	        $info = mysql_info();
+	        echo  $info ;
+	    }
 	}
 
 	$action 	= $_GET['a'];
@@ -106,6 +165,9 @@
 	$start      = $_GET['s'];
 	$limit      = $_GET['l'];
 	$query 		= $_GET['q'];
+	$header     = $_GET['h'];
+	$values     = $_GET['v'];
+	$oldValues  = $_GET['o'];
 	
 	if(($user == null) || ($password == null) || ($action == null))
 		die('Nope');
@@ -144,6 +206,16 @@
 			$con->selectDb($database);
 			echo json_encode($con->selectTable($table, $start, $limit));
 			break;
+		case "updateelement":
+		    $con->connect();
+			$con->selectDb($database);
+		    $con->updateElement($table, $header, $oldValues, $values);
+    		break;
+		case "addelement":
+		    $con->connect();
+		    $con->selectDb($database);
+		    $con->addElement($table, $header, $values);
+		    break;
 	}
 	
 	$con->disconnect();
