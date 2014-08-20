@@ -153,6 +153,27 @@
 	        $info = mysql_info();
 	        echo  $info ;
 	    }
+
+		function removeElement($table, $headerJSON, $valuesJSON){
+			$header = json_decode($headerJSON);
+	                $values = json_decode($valuesJSON);
+        	        $query = "DELETE FROM `$table` WHERE (";
+
+			for($i = 0;$i < sizeof($header); $i++){
+				$query .= "`".$header[$i]."` = '".$values[$i]."' ";
+				if($i+1!=sizeof($header))
+					$query .= " AND ";
+			}
+			$query .= ");";
+
+			$result_id = mysql_query($query);
+
+        	        if( !$result_id ){
+	                    echo mysql_error();
+        	        } else { 
+                	    echo OK;
+	                }
+		}
 	}
 
 	$action 	= $_GET['a'];
@@ -217,6 +238,11 @@
 		    $con->selectDb($database);
 		    $con->addElement($table, $header, $values);
 		    break;
+		case "removeelement":
+			$con->connect();
+			$con->selectDb($database);
+			//print_r($_GET);
+			$con->removeElement($table, $header, $values);
 	}
 	
 	$con->disconnect();
