@@ -27,6 +27,7 @@
 				}
 				else{
 					$this->is_connected = true;
+					mysql_set_charset("utf8");
 					return 'OK';
 				}
 			}
