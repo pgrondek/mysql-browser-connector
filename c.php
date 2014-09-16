@@ -176,23 +176,24 @@
 		}
 	}
 
-	$action 	= $_GET['a'];
+	$action 	= $_POST['a'];
 	
 	$server		= 'localhost';
-	$user 		= $_GET['u'];
-	$password	= $_GET['p'];
+	$user 		= $_POST['u'];
+	$password	= $_POST['p'];
 	
-	$database	= $_GET['d'];
-	$table		= $_GET['t'];
-	$start      = $_GET['s'];
-	$limit      = $_GET['l'];
-	$query 		= $_GET['q'];
-	$header     = $_GET['h'];
-	$values     = $_GET['v'];
-	$oldValues  = $_GET['o'];
+	$database	= $_POST['d'];
+	$table		= $_POST['t'];
+	$start      = $_POST['s'];
+	$limit      = $_POST['l'];
+	$query 		= $_POST['q'];
+	$header     = $_POST['h'];
+	$values     = $_POST['v'];
+	$oldValues  = $_POST['o'];
 	
 	if(($user == null) || ($password == null) || ($action == null))
 		die('Nope');
+	
 		
 	$con = new connector($user, $password, $server);
 	
