@@ -59,8 +59,28 @@
 		}
 		
 		function query($query){
-			$result = mysql_query($query);
-			return $result;
+			$result_id = mysql_query($query);
+
+			if( !$result_id ){
+	                    echo mysql_error()."\n";
+        	        } else if ( $info = mysql_info() ){
+				echo $info;
+			} else { 
+                	    	echo OK."\n";
+	                
+
+				$numOfCols = mysql_num_fields($result_id);
+				if($numOfCols > 0 ) {
+		                        for($i=0;$i<$numOfCols;$i++)
+	        	                        $field[$i] = mysql_field_name($result_id, $i);
+
+	
+					echo json_encode($field)."\n";
+					for($i=0;$row=mysql_fetch_row($result_id);$i++)
+	                        	        $result[$i] = $row;
+					echo json_encode($result);
+				}
+			}
 		}
 		
 		function disconnect(){
@@ -176,6 +196,9 @@
 		}
 	}
 
+	// DEBUG!!!
+	// $_POST = $_GET;
+
 	$action 	= $_POST['a'];
 	
 	$server		= 'localhost';
@@ -222,6 +245,8 @@
 	        break;
 		case "query":
 			$con->connect();
+			if(isset($database))
+				$con->selectDb($database);
 			$con->query($query);
 			break;
 		case "getrows":
