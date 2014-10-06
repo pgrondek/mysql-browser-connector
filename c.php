@@ -209,8 +209,7 @@ class connector
     }
 }
 
-// DEBUG!!!
-// $_POST = $_GET;
+$testEnabled = true;
 
 $action = $_POST['a'];
 
@@ -230,6 +229,10 @@ $oldValues = $_POST['o'];
 if (($user == null) || ($password == null) || ($action == null))
     die('Nope');
 
+if($testEnabled){
+    if($_GET['test']==true)
+        $_POST = $_GET;
+}
 
 $con = new connector($user, $password, $server);
 
