@@ -179,7 +179,7 @@ class connector
         if (!$result_id) {
             echo mysql_error();
         } else {
-            echo OK;
+            echo 'OK';
         }
 
         $info = mysql_info();
@@ -204,7 +204,7 @@ class connector
         if (!$result_id) {
             echo mysql_error();
         } else {
-            echo OK;
+            echo 'OK';
         }
     }
 }
@@ -233,56 +233,47 @@ if (($user == null) || ($password == null) || ($action == null))
 
 $con = new connector($user, $password, $server);
 
-switch ($action) {
-    case "login":
-        echo $con->connect();
-        break;
-    case "dblist":
-        $con->connect();
-        $list = $con->dbList();
-        echo json_encode($list);
-        break;
-    case "tablelist":
-        $con->connect();
-        echo json_encode($con->tableList($database));
-        break;
-    case "fieldlist":
-        $con->connect();
-        $con->selectDb($database);
-        echo json_encode($con->fieldList($table));
-        break;
-    case "numrows":
-        $con->connect();
-        $con->selectDb($database);
-        echo $con->numRows($table);
-        break;
-    case "query":
-        $con->connect();
-        if (isset($database))
+if($action=="login"){
+    echo $con->connect();
+} else {
+    $con->connect();
+    switch ($action) {
+        case "dblist":
+            $list = $con->dbList();
+            echo json_encode($list);
+            break;
+        case "tablelist":
+            echo json_encode($con->tableList($database));
+            break;
+        case "fieldlist":
             $con->selectDb($database);
-        $con->query($query);
-        break;
-    case "getrows":
-        $con->connect();
-        $con->selectDb($database);
-        echo json_encode($con->selectTable($table, $start, $limit));
-        break;
-    case "updateelement":
-        $con->connect();
-        $con->selectDb($database);
-        $con->updateElement($table, $header, $oldValues, $values);
-        break;
-    case "addelement":
-        $con->connect();
-        $con->selectDb($database);
-        $con->addElement($table, $header, $values);
-        break;
-    case "removeelement":
-        $con->connect();
-        $con->selectDb($database);
-        //print_r($_GET);
-        $con->removeElement($table, $header, $values);
+            echo json_encode($con->fieldList($table));
+            break;
+        case "numrows":
+            $con->selectDb($database);
+            echo $con->numRows($table);
+            break;
+        case "query":
+            if (isset($database))
+                $con->selectDb($database);
+            $con->query($query);
+            break;
+        case "getrows":
+            $con->selectDb($database);
+            echo json_encode($con->selectTable($table, $start, $limit));
+            break;
+        case "updateelement":
+            $con->selectDb($database);
+            $con->updateElement($table, $header, $oldValues, $values);
+            break;
+        case "addelement":
+            $con->selectDb($database);
+            $con->addElement($table, $header, $values);
+            break;
+        case "removeelement":
+            $con->selectDb($database);
+            $con->removeElement($table, $header, $values);
+    }
 }
-
 $con->disconnect();
 ?>
